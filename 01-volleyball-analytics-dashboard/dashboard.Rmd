@@ -7,7 +7,7 @@ output:
     theme: flatly
     source_code: embed
     navbar:
-      - { title: "Data Paste", icon: "fa-code", href: "https://pastebin.com/KRy3keEw", align: right }
+      - { title: "GitHub Repo", icon: "fa-github", href: "https://github.com/rkohnmn/MTH229", align: right }
 ---
 
 ```{r setup, include=FALSE}

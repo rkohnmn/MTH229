@@ -1,5 +1,8 @@
 # Volleyball Analytics & Spatial Court Tracking Dashboard
 
+> 🏐 **Live Interactive Dashboard**: **[https://rkohnmn.github.io/MTH229/](https://rkohnmn.github.io/MTH229/)**  
+> Direct browser-accessible deployment of the full `flexdashboard` report.
+
 An interactive sports analytics dashboard and computer vision tracking pipeline analyzing spatial court dynamics, match duration variability, and team performance metrics across professional indoor and beach volleyball.
 
 ## What I Worked On
@@ -17,10 +20,11 @@ An interactive sports analytics dashboard and computer vision tracking pipeline 
 - **Tracking Libraries**: `opencv-python`, `ultralytics` (YOLOv8), `av`, `ovml`
 
 ## Files
-- [`dashboard.Rmd`](file:///c:/Users/RobTop/Downloads/MTH229/github-r-coursework/01-volleyball-analytics-dashboard/dashboard.Rmd): Full interactive flexdashboard source file with responsive layout, custom CSS cards, and tactical commentary.
-- [`analysis.R`](file:///c:/Users/RobTop/Downloads/MTH229/github-r-coursework/01-volleyball-analytics-dashboard/analysis.R): Standalone R script executing the 2D KDE court modeling, regression analysis, and figure exports.
-- [`tracking_pipeline/`](file:///c:/Users/RobTop/Downloads/MTH229/github-r-coursework/01-volleyball-analytics-dashboard/tracking_pipeline): Frame extraction and YOLOv8 object tracking pipeline scripts (`vb_tracking.py`, `frame_convert.R`).
-- [`data/`](file:///c:/Users/RobTop/Downloads/MTH229/github-r-coursework/01-volleyball-analytics-dashboard/data): Data directory containing data dictionary and match records:
+- [`dashboard.Rmd`](dashboard.Rmd): Full interactive flexdashboard source file with responsive layout, custom CSS cards, and tactical commentary.
+- [`dashboard.html`](dashboard.html): Standalone, self-contained rendered HTML dashboard.
+- [`analysis.R`](analysis.R): Standalone R script executing the 2D KDE court modeling, regression analysis, and figure exports.
+- [`tracking_pipeline/`](tracking_pipeline/): Frame extraction and YOLOv8 object tracking pipeline scripts (`vb_tracking.py`, `frame_convert.R`).
+- [`data/`](data/): Data directory containing data dictionary and match records:
   - `Mens-Volleyball-PlusLiga-2008-2023.csv`: Polish PlusLiga match statistics.
   - `ball_positions_sample.csv`: Sample of 10,000 spatial tracking records.
   - `vb_matches_sample.csv`: Sample of 3,500 beach volleyball match records.

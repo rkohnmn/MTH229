@@ -4,11 +4,15 @@ This repository contains selected statistical computing, data visualization, and
 
 The repository has been curated to showcase original analyses, reproducible R programming, spatial tracking pipelines, stochastic simulations, and statistical modeling while excluding all instructor-provided slides, answer keys, starter worksheets, and raw classroom lecture materials.
 
+> 🏐 **Live Interactive Dashboard**: **[https://rkohnmn.github.io/MTH229/](https://rkohnmn.github.io/MTH229/)**  
+> Explore the live interactive `flexdashboard` featuring spatial ball tracking heatmaps, PlusLiga match statistics, and beach volleyball performance modeling directly in your browser.
+
 ---
 
 ## Highlights
 
 ### 1. Volleyball Analytics & Spatial Court Tracking Dashboard
+- **Live Demo**: **[rkohnmn.github.io/MTH229](https://rkohnmn.github.io/MTH229/)**
 - **Directory**: [`01-volleyball-analytics-dashboard/`](01-volleyball-analytics-dashboard/)
 - **Methods**: Deep learning object detection (YOLOv8 & OpenVolley `ovml`), spatial coordinate projection, bivariate kernel density estimation (`MASS::kde2d`), custom FIVB regulation court rendering, linear regression modeling, and full-scale `flexdashboard` engineering.
 - **Key Findings**: Video tracking of the 2025 VNL Grand Finals (Italy vs. Poland) revealed pronounced spatial clustering in the central corridor around the net due to setter distribution and first-tempo quick attacks, with secondary density spikes at the antenna pins (outside/opposite hitters) and 3 meters behind the attack line (back-row attacks).
@@ -91,6 +95,11 @@ The repository has been curated to showcase original analyses, reproducible R pr
 
 ```
 MTH229/
+├── .github/workflows/
+│   └── deploy-pages.yml             # GitHub Pages automated deployment
+├── docs/                            # GitHub Pages hosting root
+│   ├── index.html                   # Live compiled flexdashboard
+│   └── .nojekyll
 ├── .gitignore
 ├── README.md
 ├── setup.R
