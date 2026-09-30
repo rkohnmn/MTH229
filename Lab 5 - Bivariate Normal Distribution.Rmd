@@ -1,0 +1,131 @@
+---
+title: "Lab 5 - Bivariate Normal Distribution"
+author: "Robert Thomas Koh"
+date: "12/3/25"
+output: 
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+```{r, setup, include=FALSE}
+require(mosaic)   # Load additional packages here 
+require(mnormt)
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+```
+
+# Part 1: Independent Standard Normals
+
+```{r}
+set.seed(67)
+
+# Question 1
+dmnorm(c(0,0), mean=c(0,0), varcov=diag(2))
+
+# Question 2
+dnorm(0)*dnorm(0)
+
+# Question 3
+pmnorm(c(2,2), mean=c(0,0), varcov=diag(2)) - pmnorm(c(-2,2), mean=c(0,0), varcov=diag(2)) - pmnorm(c(2,-2), mean=c(0,0), varcov=diag(2)) + pmnorm(c(-2,-2), mean=c(0,0), varcov=diag(2))
+
+# Question 4
+(pnorm(2)-pnorm(-2))*(pnorm(2)-pnorm(-2))
+
+
+# Question 5
+sim=rmnorm(1000, mean=c(0,0), varcov=diag(2))
+x1_sim=sim[,1]
+x2_sim=sim[,2]
+sim_data=data.frame(x1=x1_sim, x2=x2_sim)
+print(head(sim_data, 10))
+
+# Question 6
+cor(x1_sim, x2_sim)
+
+# Question 7
+cor1=cor.test(x1_sim, x2_sim)
+print(cor1$p.value)
+
+#Fail to reject bc p>.05
+
+# Question 8
+# When Alpha is 5% you can expect 5% false positive, same logic applies.
+
+```
+
+# Part 2: Correlated Bivariate Normal
+
+```{r}
+rho_xy=-0.4
+sigma_x=5
+sigma_y=3
+mu_x=2
+mu_y=4
+MeanVec=c(mu_x, mu_y)
+VarCovMatrix=matrix(c(sigma_x^2, rho_xy*sigma_x*sigma_y,
+                      rho_xy*sigma_x*sigma_y, sigma_y^2),
+                    nrow=2, byrow=TRUE)
+print(MeanVec)
+print(VarCovMatrix)
+
+# Question 1
+dmnorm(c(2,4), mean=MeanVec, varcov=VarCovMatrix)
+
+# Question 2
+dmnorm(MeanVec, mean=MeanVec, varcov=VarCovMatrix)
+dmnorm(c(1,3), mean=MeanVec, varcov=VarCovMatrix)
+dmnorm(c(3,5), mean=MeanVec, varcov=VarCovMatrix)
+# The value is expected to be greatest at mean
+
+# Question 3
+prob_less=pmnorm(c(1,3), mean=MeanVec, varcov=VarCovMatrix)
+print(prob_less)
+
+# Question 4
+prob_x_less=pmnorm(c(1,Inf), mean=MeanVec, varcov=VarCovMatrix)
+prob_y_less=pmnorm(c(Inf,3), mean=MeanVec, varcov=VarCovMatrix)
+prob_or=prob_x_less + prob_y_less - prob_less
+print(prob_or)
+
+# Question 5
+prob_y_less - prob_less
+
+# Question 6
+sim2=rmnorm(1000, mean=MeanVec, varcov=VarCovMatrix)
+x_sim=sim2[,1]
+y_sim=sim2[,2]
+sim_data2=data.frame(x=x_sim, y=y_sim)
+print(head(sim_data2, 10))
+
+# Question 7
+cor(x_sim, y_sim)
+
+# Question 8
+cor2=cor.test(x_sim, y_sim)
+print(cor2$p.value)
+# There is no coorelation as p is significantly less than .05.
+
+
+```
+
+
+```{r}
+
+# Part (a)
+1 - 0.5 * (3/2) * (3 - 2)
+
+# Part (b)
+3^2 * (1 - -0.5^2)
+
+# Part (c)
+1 / sqrt(27/7)
+
+```

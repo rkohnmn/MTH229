@@ -1,0 +1,55 @@
+---
+title: "Flights Merging Datasets In-Class Work"
+author: "Robert Thomas Kohn"
+date: "10/8/25"
+output: 
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+```{r, setup, include=FALSE}
+require(mosaic)   # Load additional packages here 
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+theme_set(theme_classic( ))
+library(dplyr)
+library(stringr)
+library(ggplot2)
+library(tidyverse)
+library(scales)
+library(mosaic)
+```
+
+
+# NYCFLIGHTS13 
+
+```{r}
+
+require(nycflights13)
+data("flights")
+data("weather")
+head(flights)
+head(weather)
+flights_clean <- flights %>% select(year, month, day, dep_time, arr_time, carrier, flight, origin, dest, air_time, distance,dep_delay)
+weather_clean <- weather %>% select(year, month, day, temp, dewp, humid, wind_speed)
+flights_weather <- flights_clean %>% left_join(weather_clean, by = c("year", "month", "day"))
+head(flights_weather)
+
+# Are longer flights more common in specific weather conditions?
+
+gf_bin2d(temp ~ distance, data = flights_weather, bins = 50, color = "blue", alpha = 0.5) %>% gf_labs(x = "Flight Distance (miles)", y = "Temperature (°F)", title = "No Relationship Between Distance and Temperature", subtitle = "Bin2D Plot Visualizing Flights and Temperature", caption = "Flights & Weather (nycflights13)") %>% gf_theme(axis.title.y = element_text(angle = 0, vjust = 0.5),text = element_text(size = 8))
+
+gf_bin2d(temp ~ dep_delay, data = flights_weather, bins = 50,color = "blue", alpha = 0.5) %>% gf_labs(x = "Departure Delay (minutes)",y = "Temperature (°F)",title = "Temperature has an inverse relationship with Delay",subtitle = "Bin2D Plot Visualizing Departure Delays Across Temperatures",caption = "Flights & Weather (nycflights13)") %>% gf_theme(axis.title.y = element_text(angle = 0, vjust = 0.5),text = element_text(size = 8))
+
+
+
+```
+

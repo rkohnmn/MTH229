@@ -1,0 +1,43 @@
+---
+title: "Height Wrangling Practice"
+author: "Robert Thomas Kohn"
+date: "10/1/25"
+output: 
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+```{r, setup, include=FALSE}
+require(mosaic)   # Load additional packages here 
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+theme_set(theme_classic( ))
+library(tidyverse)
+library(scales)
+library(mosaic)
+```
+
+# Question: Does Sex Impact Ones Height?
+
+```{r}
+
+library(Lock5Data)
+data(HeightData)
+head(HeightData)
+summary(HeightData)
+hdc <- HeightData %>% mutate(across(everything(), as.factor)) #Cleaning and Factor
+hd<-hdc%>%pivot_longer(cols = -c(ID, Sex), names_to = "Year", names_prefix="Year_", values_to = "Height")%>%mutate(Year = as.numeric(Year), Height = as.numeric(Height),Sex = as.factor(Sex))
+head(hd)
+
+gf_point(Height ~ Year, data = hd, color=~Sex)%>% gf_facet_wrap(~ Sex)%>%gf_labs(x = "Age of Subject", y = "Height", title="Women and Men follow similar growth patterns" , subtitle = "Scatterplot of Year vs Height seperated by Sex" , caption = "HeightData(Lock5Data)",color = "Sex of Subject")%>%gf_theme(axis.title.y = element_text(angle = 0, vjust = 0.5),plot.caption = element_text(size = 6))
+
+```
+

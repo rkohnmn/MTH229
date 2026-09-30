@@ -1,0 +1,67 @@
+---
+title: "1 First Refinements Computer Lab"
+author: "Robert Thomas Kohn"
+date: "09/11/25"
+output: 
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+```{r, setup, include=FALSE}
+require(mosaic)   # Load additional packages here 
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+theme_set(theme_bw())
+```
+
+# Graph 1
+
+```{r}
+require(Lock5Data)
+data(MarriageAges)
+head(MarriageAges)
+
+gf_point(Husband~Wife,data=MarriageAges, alpha = 0.7)%>%gf_labs(x = "Wife Age", y = "Husband Age", title="Husbands Tend to Marry Younger Slightly" , subtitle = "Examining Relationship between Husband Age explained by Wife " , caption = "Dataset: MarriageAges(Lock5Data)" ) %>% gf_abline( slope = 1 , intercept = 0,linetype = "dashed",color =  "gray60" )%>%gf_text( 70 ~ 20 , hjust = 0, label = " Husband Older " , size = 6 , color = " gray80 " )%>%gf_text( 30 ~ 55 , hjust = 0, label = " Wife Older " , size = 6 , color = " gray80 " )
+```
+
+
+# Graph 2
+
+```{r}
+
+data(StudentSurvey)
+head(StudentSurvey)
+
+gf_bar(~ Award , data = StudentSurvey )%>%gf_labs(x = "Award Type", y = "Quantity", title="Olympic Award is the preffered award among students" , subtitle = "Examining Student Preferences" , caption = "Dataset: StudentSurvey(Lock5Data)" )
+
+gf_bar(~ Award , data = StudentSurvey )%>% gf_facet_wrap( ~ Year )%>%gf_labs(x = "Award Type", y = "Quantity", title="Olympic Award tends to be the preffered award" , subtitle = "Examining Student Preferences - Facet" , caption = "Dataset: StudentSurvey(Lock5Data)" )
+
+gf_bar(~ Award , data = StudentSurvey )%>% gf_facet_wrap( ~ Year,nrow=1 )%>%gf_labs(x = "Award Type", y = "Quantity", title="Olympic Award tends to be the preffered award" , subtitle = "Examining Student Preferences - Facet nrow=1" , caption = "Dataset: StudentSurvey(Lock5Data)" )
+
+gf_bar(~ Award , data = na.omit(StudentSurvey) )%>% gf_facet_wrap( ~ Year,nrow=1 )%>%gf_labs(x = "Award Type", y = "Quantity", title="Olympic Award tends to be the preffered award" , subtitle = "Examining Student Preferences" , caption = "Dataset: na.omit(StudentSurvey)(Lock5Data)" )
+```
+
+# Graph 3
+
+```{r}
+require(resampledata)
+data(Cuckoos)
+head(Cuckoos)
+gf_boxplot(Eggs ~ Bird , data = Cuckoos )%>%gf_labs(x = "Bird Type", y = "Egg Quantity", title="Showcasing Birds and Their Egg Quantity" , subtitle = "* Notable outliers for Meadow Pipits and Hedge Sparrow" , caption = "Dataset: Cuckoos(resampledata)" )
+
+require( forcats )
+gf_boxplot( Eggs ~ fct_reorder( Bird , Eggs ) , data = Cuckoos, fill = ~ Bird)%>%gf_labs(x = "Bird Type", y = "Egg Quantity", title="Showcasing Birds and Their Egg Quantity" , subtitle = "* Notable outliers for Meadow Pipits and Hedge Sparrow" , caption = "Dataset: Cuckoos(resampledata)" )
+
+gf_boxplot( Eggs ~ fct_reorder( Bird , Eggs ) , data = Cuckoos, fill = ~ Bird , show.legend = FALSE)%>%gf_labs(x = "Bird Type", y = "Egg Quantity", title="Showcasing Birds and Their Egg Quantity" , subtitle = "* Notable outliers for Meadow Pipits and Hedge Sparrow" , caption = "Dataset: Cuckoos(resampledata)" )
+
+gf_boxplot( Eggs ~ fct_reorder( Bird , Eggs ) , data = Cuckoos, fill = ~ Bird)%>%gf_theme(legend.position = "bottom")%>%gf_labs(x = "Bird Type", y = "Egg Quantity", title="Showcasing Birds and Their Egg Quantity" , subtitle = "* Notable outliers for Meadow Pipits and Hedge Sparrow" , caption = "Dataset: Cuckoos(resampledata)" )
+
+```

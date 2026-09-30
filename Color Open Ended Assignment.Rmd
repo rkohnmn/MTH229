@@ -1,0 +1,86 @@
+---
+title: "Color Open Ended Assignment"
+author: "Robert Thomas Kohn"
+date: "9/24/25"
+output: 
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+```{r, setup, include=FALSE}
+require(mosaic)   # Load additional packages here 
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+theme_set(theme_classic( ))
+require(MASS)
+library(ggformula)
+require(viridis)
+library(palmerpenguins)
+```
+
+
+# Color to Highlight
+
+```{r}
+gf_point(MPG.highway ~ Weight , data = Cars93, color = ~(Type=="Van") ) %>%gf_refine(annotate(geom = "text", y = 20, x = 3500, label = "Vans", color = "deepskyblue3"),scale_color_manual(values = c("FALSE" = "red", "TRUE" = "blue"),labels = c("FALSE" = "Is not a Van", "TRUE" = "Is a Van")))%>%gf_labs(x = "X", y = "Density", title="The Heavier the Car, the Less MPG on the Highway" , subtitle = "Scatterplot of Weight vs MPG on the Highway" , caption = "Cars93(MASS)",color = "Vehicle Type")%>%gf_theme( legend.position = c(0.7,0.7) )%>% gf_theme(axis.title.y = element_text(angle = 0, vjust = 0.5))
+
+#Revised, Point Size, Subtitle, Labels, Bold Title
+
+gf_point(MPG.highway ~ Weight , data = Cars93, color = ~(Type=="Van"), size = 3, alpha = 0.7 ) %>%gf_refine(annotate(geom = "text", y = 20, x = 3500, label = "Vans", color = "deepskyblue3"),scale_color_manual(values = c("FALSE" = "red", "TRUE" = "blue"),labels = c("FALSE" = "Is not a Van", "TRUE" = "Is a Van")))%>%gf_labs( x = "Weight (lbs)", y = "Highway MPG", title="Heavier Cars get Less MPG on Highway" , subtitle = "Vans highlighted in blue, typically heavier with lower MPG", caption = "Cars93(MASS)",color = "Vehicle Type")%>%gf_theme( legend.position = c(0.8,0.8) )%>% gf_theme(axis.title.y = element_text(angle = 0, vjust = 0.5))
+```
+
+In the revised graph I updated the way the points look, I felt like a slightly bigger size would be beneficial for clarity but to compensate I decreased the alpha so the overlap becomes apparent. I also updated the subtitle to be more descrpitive. The axes also had poor labels in the original. To rectify this issue, I gave them their proper units and labels. 
+
+# Discrete Color
+
+```{r}
+
+gf_density( ~ bill_length_mm , data = penguins , color = ~ species)%>%gf_refine( scale_fill_manual( values = c( "darkorange","purple","cyan4" ) ) )%>%gf_labs(x = "Bill Length", y = "Density", title="Adeile have the Smallest Beaks Typically" , subtitle = "Density Plot of Bill Length per Species" , caption = "Penguins(palmerpenguins)",color = "Species")%>% gf_theme(axis.title.y = element_text(angle = 0, vjust = 0.5))
+
+#Revised Alpha, fill, Legend Bottom, plot and legend bold, Subtitle
+
+gf_density( ~ bill_length_mm , data = penguins , fill = ~ species, alpha = 0.3)%>%gf_refine( scale_fill_manual( values = c( "darkorange","purple","cyan4" ) ) )%>%gf_labs(x = "Bill Length (mm)", y = "Density", title="Adeile have the Smallest Beaks Typically" , subtitle = "Penguin Bill Length Distribution by Species" , caption = "Penguins(palmerpenguins)",fill = "Species")%>% gf_theme(axis.title.y = element_text(angle = 0, vjust = 0.5),legend.position = "bottom", legend.title = element_text(face = "bold"),plot.title = element_text(face = "bold", size = 14))
+
+```
+One of the major points you mentioned with this one was to fill instead of color, taking that into account, I decided I would also use alpha levels to make it clear where there was overlap and how much their was. I also moved the legend to the bottom to make it look cleaner generally. The legend and title got bolding to draw attention to the important things to start on a graph. The final thing I changed was I added a more approriate subtitle labeling it as distribution and not density for easier layman access.
+
+# Continuous Color
+
+```{r}
+require(tidyr)
+df.volcano = as.data.frame(volcano) %>%
+mutate(X = seq(from = 1, to = 87, by=1)) %>%
+pivot_longer(cols = starts_with("V"), names_to = "Y", names_prefix = "V", values_to = "Z") %>%
+mutate(Y = as.numeric(Y))
+gf_raster(Z~X+Y, data = df.volcano)%>%gf_theme(theme_void())%>%gf_refine( scale_fill_viridis( option = "magma" ) )%>%gf_labs(x = "x", y = "y", title="Volcano Plot" , subtitle = "" , caption = "df.volcano",color = "Z")%>% gf_theme(axis.title.y = element_text(angle = 0, vjust = 0.5))
+
+
+#Revised, Title, Reversed Direction, removed x and y, relabled legend, fixed ratio
+
+gf_raster(Z~X+Y, data = df.volcano)  %>% gf_refine( scale_fill_viridis(direction = -1, option = "magma" ))%>%gf_theme(theme_void()) %>% gf_labs(x = "", y = "", title="Volcano Topography  Plot" , subtitle="Raster Plot of Volcano Elevation", caption = "df.volcano",fill = "Elevation(m)")%>% gf_theme(plot.title = element_text(hjust = 0.5, face = "bold"),axis.title.y = element_text(angle = 0, vjust = 0.5), legend.title = element_text(size = 10))%>%gf_refine(coord_fixed(ratio = 1))
+
+```
+
+The Volcano Plot was kind of bland in the original plot. I felt like I needed to touch it up more in this. For starters, I prefer associating higher elevations with darker colors while the lower values are 'empty' so to speak and thefore closer to white. I liked the color scheme in magma though so I just reversed the direction. I also added topography to the title as I believed it would help better describe what we are looking at. In the subtitle I decided to include plot type, being raster. Additionally, I felt like x and y complicated things such that removing them was optimal. Additionally, I relabed the key to be Elevation in terms of meters. then applied a fixed ratio.
+
+# Chosen “mid” point
+
+```{r}
+
+gf_raster(Z~X+Y, data = df.volcano)%>%gf_theme(theme_void())%>%gf_refine(scale_fill_gradient2(low = "black", mid = "white", high = "purple", midpoint = 135))%>%gf_labs(x = "x", y = "y", title="Volcano Plot" , subtitle = "" , caption = "df.volcano",color = "Z")%>% gf_theme(axis.title.y = element_text(angle = 0, vjust = 0.5))
+
+#Revised, Ratio, Subtitle, Legend
+
+gf_raster(Z~X+Y, data = df.volcano)%>%gf_theme(theme_void())%>%gf_refine(scale_fill_gradient2(low = "black", mid = "white", high = "purple", midpoint = 135,name = "Elevation (m)"))%>%gf_labs(x = "x", y = "y", title="Volcano Plot" , subtitle = "Black: Below 135m | White: 135m | Purple: Above 135m" , caption = "df.volcano",color = "Z")%>% gf_theme(plot.title = element_text(hjust = 0.5, face = "bold", size = 14),axis.title.y = element_text(angle = 0, vjust = 0.5))%>%gf_refine(coord_fixed(ratio = 1)) 
+
+```
+
+For the chosen “mid” point I was unsure what to change precisely but I felt updating the legend was a good starting point. Additionally, making the subtitle more descriptive was important too. Finally, I fixed the ratio to complete this revision cylce.

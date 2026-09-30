@@ -1,0 +1,36 @@
+# History and Workspace artifacts
+.Rhistory
+.RData
+.Ruserdata
+.Renviron
+.Rproj.user/
+*.Rproj.user
+
+# Build and knitted clutter
+*.Rcheck/
+*.synctex.gz
+*.nav
+*.snm
+*.vrb
+
+# OS specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Large Raw Video and Binary Weights
+*.mp4
+*.avi
+*.mov
+*.pt
+*.onnx
+*.weights
+*.h5
+
+# Private Review Audit (for Robert only)
+COURSEWORK_REVIEW.md
+
+# Cache directories
+*_cache/
+*_files/
+.cache/

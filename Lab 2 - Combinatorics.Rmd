@@ -1,0 +1,98 @@
+---
+title: "Lab 2 - Combinatorics.docx"
+author: "Robert Thomas Kohn"
+date: "9/27/25"
+output: 
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+```{r, setup, include=FALSE}
+require(mosaic)   # Load additional packages here 
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+```
+
+# Example
+
+```{r}
+
+Minors = c("Analytics", "Math", "CS", "Stats")
+require(DescTools)
+MinorCombos=CombSet(Minors, 2, repl=F, ord=F)
+View(MinorCombos)
+head(MinorCombos)
+tail(MinorCombos)
+nrow(MinorCombos)
+
+```
+
+# Ice Cream
+
+```{r}
+set.seed(67)
+Flavors <- c("Vanilla", "Chocolate", "Strawberry", "Cookies & Cream", "Cookie Dough", "Mint Chocolate Chip", "Butter Pecan", "Coffee")
+
+```
+
+# Scenario 1: Unordered, without replacement (Combinations)
+
+
+```{r}
+
+Scenario1 <- CombSet(Flavors, 3, repl = FALSE, ord = FALSE)
+print(Scenario1) # Print Total
+print(head(Scenario1, 10)) # First 10
+print(tail(Scenario1, 10)) # Last 10
+print(Scenario1[sample(nrow(Scenario1), 5), ]) # 5 Random
+#56 total combos in first print
+print(choose(8, 3)) #8c3 compare
+#Same
+```
+
+# Scenario 2: Ordered, without replacement (Permutations)
+
+```{r}
+Scenario2 <- CombSet(Flavors, 3, repl = FALSE, ord = TRUE)
+print(Scenario2) # Print Total
+print(head(Scenario2, 10)) # First 10
+print(tail(Scenario2, 10)) # Last 10
+print(Scenario2[sample(nrow(Scenario2), 5), ]) # 5 Random
+#336 total combos in first print
+print(factorial(8) / factorial(5)) #8!/5!=336
+#Same
+```
+
+# Scenario 3: Ordered, with replacement
+
+```{r}
+Scenario3 <- CombSet(Flavors, 3, repl = TRUE, ord = TRUE)
+print(Scenario3) # Print Total
+print(head(Scenario3, 10)) # First 10
+print(tail(Scenario3, 10)) # Last 10
+print(Scenario3[sample(nrow(Scenario3), 5), ]) # 5 Random
+#512 total combos in first print
+print(8^3) #8^3=512
+#Same
+```
+
+# Scenario 4: Unordered, with replacement
+
+```{r}
+Scenario4 <- CombSet(Flavors, 3, repl = TRUE, ord = FALSE)
+print(Scenario4) # Print Total
+print(head(Scenario4, 10)) # First 10
+print(tail(Scenario4, 10)) # Last 10
+print(Scenario4[sample(nrow(Scenario4), 5), ]) # 5 Random
+#120 total combos in first print
+print(choose(8+3-1, 3)) #12c3 compare
+#same
+```

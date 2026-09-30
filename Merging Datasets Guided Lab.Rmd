@@ -1,0 +1,76 @@
+---
+title: "Merging Datasets Guided Lab"
+author: "Robert Thomas Kohn"
+date: "October 6th 2025"
+output: 
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+```{r, setup, include=FALSE}
+require(mosaic)   # Load additional packages here 
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+theme_set(theme_classic( ))
+library(dplyr)
+library(stringr)
+library(ggplot2)
+library(tidyverse)
+library(scales)
+library(mosaic)
+```
+
+# STATES - USA Bald Eagle Screaming Noise
+
+```{r}
+
+States1 <- read.csv("States1.csv")
+States2 <- read.csv("States2.csv")
+States <- States2 %>% left_join(States1 %>% dplyr::select(State, Union))
+States<-States%>%mutate(Population = as.numeric(gsub(",", "", Population)))#Removing commas so it is numeric
+head(States)
+#Minimum Wage vs Population Faceted by Governor Population
+gf_point(Population ~ MinimumWage , data = States, color = ~(GovernorParty=="Democrat") )%>%gf_refine(scale_color_manual(values = c("FALSE" = "red", "TRUE" = "blue"),labels = c("FALSE" = "Republican", "TRUE" = "Democrat")))%>%gf_labs(x = "Minimum Wage", y = "Population", title="No Relationship Between Population and Wage" , subtitle = "Scatterplot of Minimum Wage vs Population and Party" , caption = "States 1 & 2(csv)",color = "Governor Party")%>%gf_theme( legend.position = "bottom")#%>% gf_theme(axis.title.y = element_text(angle = 0, vjust = 0.5))
+
+```
+
+# Animal 
+
+```{r}
+library(dplyr)
+library(stringr)
+library(ggplot2)
+library(tidyverse)
+library(scales)
+library(mosaic)
+Animals4 <- read.csv("Animals4.csv")
+Animals5 <- read.csv("Animals5.csv")
+head(Animals4)
+head(Animals5)
+colnames(Animals4)[c(2, 3, 6)] <- c("Lifespan", "Gestation", "Length")
+Animals4 <- Animals4 %>%  dplyr::select(Animal, Lifespan, Gestation, Diet, Length)
+Animals5 <- Animals5 %>% dplyr::select(Animal, Lifespan, Gestation, Length = AvgLength, Diet)
+Animals5 <- Animals5 %>% mutate(Diet = str_to_lower(Diet),Animal = str_replace_all(string = Animal, pattern = "(.)([A-Z])", replace = "\\1 \\2"))
+Unique_Animals5 <- Animals5 %>% anti_join(Animals4, by = "Animal")
+AllAnimals <- Animals4 %>% full_join(Unique_Animals5)
+head(AllAnimals)
+nrow(AllAnimals)
+
+duplicate_animals <- AllAnimals %>% 
+  count(Animal) %>% 
+  filter(n > 1)
+print(duplicate_animals)
+
+#Question: How is the length of animals distributed?
+gf_density(~Length, data = AllAnimals, fill = "purple", alpha = 0.5)%>%gf_labs(x = "Length(ft)", y = "Count", title="The Majority of Animals are Smaller than 200" , subtitle = "Distribution of Animal Diets" , caption = "Animals 4 & 5(csv)")%>% gf_theme(axis.title.y = element_text(angle = 0, vjust = 0.5))
+
+
+```

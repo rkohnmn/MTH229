@@ -1,0 +1,104 @@
+---
+title: "Statebins Guided Lab (Part 3)"
+author: "Robert Thomas Kohn"
+date: "11/4/25"
+output: 
+  pdf_document:
+    fig_height: 5
+    fig_width: 7
+  html_document:
+    fig_height: 5
+    fig_width: 7
+  word_document:
+    fig_height: 5
+    fig_width: 7
+---
+
+```{r, setup, include=FALSE}
+require(mosaic)   # Load additional packages here 
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+theme_set(theme_classic())
+library(tidyverse)
+library(lubridate)
+#library(mosaic)
+library(Lock5Data)
+library(Stat2Data)
+library(dplyr)
+library(ggrepel)
+library(scales)
+library(stringr)
+library(usmap)
+library(mapdata)
+library(maps)
+library(mapdata)
+library(tibble)
+library(gapminder)
+library(viridis)
+library(usdata)
+require(socviz)
+library(statebins)
+library(ggplot2)
+```
+
+#Graph 1 : Statebins with Continuous Data
+
+```{r}
+
+data(election)
+election = socviz::election
+head(election)
+statebins( election , state_col = "st", value = "pct_clinton")
+statebins( election , state_col = "st", value = "pct_clinton")%>%gf_theme(theme_statebins())
+statebins( election , state_col = "st", value = "pct_clinton", round = TRUE)%>%gf_theme(theme_statebins())
+statebins( election , state_col = "st", value = "pct_clinton", round = TRUE)%>%gf_theme(theme_statebins())%>% gf_refine( scale_fill_distiller( direction = 1 ))
+statebins( election , state_col = "st", value = "pct_clinton", round = TRUE)%>%gf_theme(theme_statebins())%>% gf_refine( scale_fill_distiller( direction = 1 ))%>%gf_labs(title = "2016 Election Map",fill="% Clinton")
+```
+
+# Graph 2: Discretized Continuous Data
+
+```{r}
+
+diced = election  %>% mutate( clinton = cut( pct_clinton , breaks = 3 , labels = c("High Desire", "Average Desire", "Low Desire")))
+
+head(diced)
+
+statebins( diced , state_col = "st", value = "clinton", ggplot2_scale_function = scale_fill_brewer )
+statebins( diced , state_col = "st", value = "clinton", ggplot2_scale_function = scale_fill_brewer )%>%gf_theme(theme_statebins())%>%gf_labs(title = "2016 Election Map",fill="Clinton for President?")
+
+```
+
+# Graph 3: Statebins Binary Graph
+
+```{r}
+
+statebins(election, state_col = "st", value = "party", ggplot2_scale_function = scale_fill_brewer)
+statebins(election, state_col = "st", value = "party", ggplot2_scale_function = scale_fill_manual, values = c("royalblue", "darkred"))
+#statebins(election, state_col = "st", value = "party", ggplot2_scale_function = scale_fill_manual, values = c("royalblue", "darkred"), round = TRUE) %>% gf_theme(theme_statebins()) %>% gf_labs(title = "2016 Election Results by Party", fill = "Winning Party")
+
+
+```
+
+
+# Graph 4: Multiple Categories
+
+```{r}
+
+statebins(election, state_col = "st", value = "census", ggplot2_scale_function = scale_fill_brewer)
+
+
+#statebins(election, state_col = "state",value = "census",ggplot2_scale_function = scale_fill_brewer, palette = "Oranges",round = TRUE) %>%gf_theme(theme_statebins())#Your code yields and error for me
+
+```
+
+
+# Graph 5 New Dataset!
+
+```{r}
+
+NewState77 <- as.data.frame(state.x77) %>% rownames_to_column("state") %>%rename(LifeExp = `Life Exp`,HSGrad  = `HS Grad`) %>%mutate(region = tolower(state), st = state.abb[match(state, state.name)]) #GPT assisted fix
+
+statebins(NewState77, state_col = "st", value = "HSGrad", round = TRUE) %>%gf_theme(theme_statebins()) %>%gf_refine(scale_fill_distiller(palette = "Blues", direction = 1)) %>%gf_labs(title = "High School Graduation Rates", fill = "% Graduates")
+
+```

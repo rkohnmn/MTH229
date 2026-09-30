@@ -1,0 +1,51 @@
+Animal,Lifespan(years),GestationPeriod(days),TypeofAnimal,Diet,Length(in)
+Mole,4,40,mammal,carnivore,6
+Capybara,4,140,mammal,herbivore,51
+Hedgehog,5,40,mammal,insectivore,10
+Baboon,30,180,mammal,omnivore,20
+Horse,28,340,mammal,herbivore,96
+Camel,40,410,mammal,carnivore,120
+Hog,8,120,mammal,omnivore,60
+Puma,12,91,mammal,carnivore,84
+Parakeet,13,18,bird,herbivore,7
+Bison,15,283,mammal,herbivore,111.6
+Ox,20,283,mammal,herbivore,60
+Starfish,35,0,echinoderm,omnivore,7
+Tapir,25,390,mammal,herbivore,84
+Addax,20,263,mammal,herbivore,60
+Lamb,12,152,mammal,herbivore,50
+Argali,7,160,mammal,herbivore,60
+Oryx,15,240,mammal,herbivore,72
+Rabbit,2,30,mammal,herbivore,13
+Parrot ,50,28,bird,omnivore,40
+Antelope,20,235,mammal,herbivore,96
+Bald Eagle,20,35,bird,carnivore,37
+Cougar,12,91,mammal,carnivore,90
+Chipmunk,6,30,mammal,omnivore,8
+Koala,15,32,mammal,herbivore,30
+Aardvark ,23,213,mammal,carnivore,42
+Lynx ,7,65,mammal,carnivore,36
+Mink,5,40,mammal,carnivore,15
+Grizzly Bear,20,200,mammal,omnivore,78
+Blue Whale,80,335,mammal,carnivore,960
+Alligator,50,183,reptile,carnivore,157.2
+Meerkat,12,70,mammal,omnivore,12
+Duckbill Platypus,17,14,mammal,carnivore,18
+Crow,12,18,bird,carnivore,22
+Panda,20,115,mammal,omnivore,50
+Finch,10,15,bird,herbivore,6
+Boar,12,115,mammal,omnivore,66
+Fawn,12,200,mammal,omnivore,35
+Tiger,16,105,mammal,carnivore,90
+Jaguar ,14,93,mammal,carnivore,72
+Gecko,12,20,reptile,carnivore,6
+Monkey,20,164,mammal,omnivore,48
+Seal,30,240,mammal,carnivore,80
+Bison,18,283,mammal,herbivore,112
+Chicken,8,21,bird,omnivore,16
+Gorilla,35,257,mammal,herbivore,63
+Chinchilla,10,112,mammal,herbivore,10
+Owl,4,32,bird,carnivore,20
+Frog,10,14,amphibian,carnivore,5
+Giraffe,22,450,mammal,herbivore,168
+Hippo,45,243,mammal,herbivore,156

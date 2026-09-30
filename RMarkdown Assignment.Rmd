@@ -1,0 +1,41 @@
+---
+title: "Markdown Assignment - Kohn"
+author: "Robert Thomas Kohn"
+date: "August 25th 2025"
+output: 
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+```{r, setup, include=FALSE}
+require(mosaic)   # Load additional packages here 
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+```
+
+
+# Preferred Name
+
+Robbie
+
+# Why Data Visualization?
+
+Data Visualization was a necessity for me for multiple reasons. First and foremost I am a statistics, mathematics, and physics major therefore this course was a no brainer and non-negotiable for me. Furthermore, I love statistics and making visuals for people to understand. No one ever understands the 5,000 cells describing different things but when its in a visual even the dumbest person you know can grasp the key things. I hope to become significantly more proficent in creating visual models which are appealing. I already make many models as is for different purposes but being able to make them nice would be fun.
+
+# Summer Fun
+
+Over the summer I go promoted to head chef in my kitchen so I had to work 50 hour weeks and not go out much but that didn't stop me. I got to see lots of my hometown friends go on many nice dates with my girlfriend and meet her friends too. The most fun things I did this summer were going to hot pot with my friends and having to carry two of them out and making carne asada for the whle staff at my workplace and having them love it.
+
+
+```{r}
+gf_point(births~day_of_year, data=Births78)
+```
+

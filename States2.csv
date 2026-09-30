@@ -1,0 +1,51 @@
+State,MinimumWage,Population,BiggestCityPop,NumberofCities,GovernorParty
+Alabama,,"4,921,532","1,090,435",5,Republican
+Alaska,10.34,"731,158","291,826",1,Republican
+Arizona,12.15,"7,421,401","1,633,017",5,Republican
+Arkansas,11,"3,030,522","198,606",0,Republican
+California,13,"39,368,078","3,990,456",15,Democrat
+Colorado,12.32,"5,807,719","705,576",3,Democrat
+Connecticut,12,"3,557,006","145,639",0,Democrat
+Delaware,9.25,"986,809","69,875",0,Democrat
+Florida,8.65,"21,733,312","890,467",5,Republican
+Georgia,5.15,"10,710,017","488,800",1,Republican
+Hawaii,10.1,"1,407,006","348,985",1,Democrat
+Idaho,7.25,"1,826,913","226,115",0,Republican
+Illinois,11,"12,587,530","2,709,534",1,Democrat
+Indiana,7.25,"6,754,953","874,005",2,Republican
+Iowa,7.25,"3,163,561","215,636",0,Republican
+Kansas,7.25,"2,913,805","389,877",1,Democrat
+Kentucky,7.25,"4,477,251","617,790",2,Democrat
+Louisiana,,"4,645,318","390,845",1,Democrat
+Maine,12.15,"1,350,141","66,595",0,Democrat
+Maryland,11.75,"6,055,802","609,032",1,Republican
+Massachusetts,13.5,"6,893,574","684,379",1,Republican
+Michigan,9.87,"9,966,555","674,841",1,Democrat
+Minnesota,10,"5,657,342","420,324",2,Democrat
+Mississippi,,"2,966,786","166,383",0,Republican
+Missouri,10.3,"6,151,548","486,404",2,Republican
+Montana,8.75,"1,080,577","109,595",0,Republican
+Nebraska,9,"1,937,552","475,862",2,Republican
+Nevada,7.25,"3,138,259","634,773",2,Democrat
+New Hampshire,7.25,"1,366,275","112,109",0,Republican
+New Jersey,12,"8,882,371","281,054",2,Democrat
+New Mexico,10.5,"2,106,319","559,374",1,Democrat
+New York,12.5,"19,336,776","8,419,316",6,Democrat
+North Carolina,7.25,"10,600,823","857,425",4,Democrat
+North Dakota,7.25,"765,309","121,889",0,Republican
+Ohio,8.8,"11,693,217","878,553",4,Republican
+Oklahoma,7.25,"3,980,783","643,692",2,Republican
+Oregon,12,"4,241,507","645,291",1,Democrat
+Pennsylvania,7.25,"12,783,254","1,579,075",2,Democrat
+Rhode Island,11.5,"1,057,125","179,494",0,Democrat
+South Carolina,,"5,218,040","135,257",0,Republican
+South Dakota,9.45,"892,717","177,117",0,Republican
+Tennessee,,"6,886,834","687,488",2,Republican
+Texas,7.25,"29,360,759","2,310,432",11,Republican
+Utah,7.25,"3,249,879","197,756",0,Republican
+Vermont,11.75,"623,347","42,545",0,Republican
+Virginia,7.25,"8,590,563","450,201",1,Democrat
+Washington,13.69,"7,693,612","724,305",1,Democrat
+West Virginia,8.75,"1,784,787","48,006",0,Republican
+Wisconsin,7.25,"5,832,655","594,548",2,Democrat
+Wyoming,7.25,"582,328","63,607",0,Republican

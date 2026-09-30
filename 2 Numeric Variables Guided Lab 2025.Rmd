@@ -1,0 +1,59 @@
+---
+title: "2 Numeric Variables Guided Lab 2025"
+author: "Robert T Kohn"
+date: "9/2/25"
+output: 
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+```{r, setup, include=FALSE}
+require(mosaic)   # Load additional packages here 
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+```
+
+# Importing & Cleaning Data
+
+```{r}
+library(readr)
+Quarterbacks <- readr::read_csv("C:/Users/RobTop/Documents/STA227 - Data Visualization/Quarterbacks.csv")
+Quarterbacks<-na.omit(Quarterbacks)#Remove 2 Rows With Errors or Missing value
+head(Quarterbacks)
+
+```
+# Exploring Data
+
+I would say theres probably a decent argument for those who play more have a higher score however players like Barry Sanders would likely have a similar score to some 'one hit wonder' players due to lack of games in comparison to a few big season players. Curious to see what happens.
+
+# Application
+```{r}
+gf_point( HOFScore ~ GamesStarted , data = Quarterbacks, title="Scatterplot Starts vs HOFScore")
+gf_point( GamesStarted ~ HOFScore , data = Quarterbacks, title="Scatterplot HOFScore vs Starts")
+gf_point( GamesStarted ~ HOFScore , data = Quarterbacks , alpha = 0.5 , title="Scatterplot HOFScore vs Starts , alpha = 0.5 ")
+```
+
+# Contour Lines & Layers
+```{r}
+gf_density_2d( HOFScore ~ GamesStarted , data = Quarterbacks, title="gf_density_2d Starts vs HOFScore")
+gf_density_2d( HOFScore ~ GamesStarted , data = Quarterbacks, title="contour lines and each individual point") %>% gf_point(HOFScore ~ GamesStarted , data = Quarterbacks , alpha = 0.5 )
+```
+
+# Density Filled (With Layers)
+```{r}
+gf_density_2d_filled( HOFScore ~ GamesStarted , data = Quarterbacks, title="gf_density_2d Starts vs HOFScore Filled")
+gf_density_2d_filled( HOFScore ~ GamesStarted , data = Quarterbacks, title="contour lines and each individual point Filled") %>% gf_point(HOFScore ~ GamesStarted , data = Quarterbacks , alpha = 0.5, color="white")
+```
+
+# Hex Plot
+```{r}
+gf_hex( HOFScore ~ GamesStarted , data = Quarterbacks, title="Hexplot Starts vs HOFScore")
+```

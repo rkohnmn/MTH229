@@ -1,0 +1,79 @@
+---
+title: "Time Open Ended Assignment"
+author: "Robert Thomas Kohn"
+date: "10/23/25"
+output: 
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+```{r, setup, include=FALSE}
+require(mosaic)   # Load additional packages here 
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+theme_set(theme_classic( ))
+library(tidyverse)
+library(lubridate)
+library(mosaic)
+library(Lock5Data)
+library(Stat2Data)
+library(dplyr)
+library(ggrepel)
+library(scales)
+```
+# SINGLE VARIABLE - NON-STANDARD FORMATTING 
+
+Do home teams have an advantage in scoring?
+
+```{r}
+data(NFLScores2011)
+head(NFLScores2011)
+NFL_clean <- NFLScores2011 %>%mutate(Year = ifelse(Week == 17, 2012, 2011), NewDate = dmy(paste0(Date, Year)), HomeWin = HomeScore > AwayScore)
+
+gf_linerange(HomeScore + AwayScore ~ NewDate, data = NFL_clean, color = ~HomeWin, alpha = 0.7, size = 1.2) %>% gf_refine(scale_color_manual(values = c("FALSE" = "red", "TRUE" = "darkgreen"),labels = c("Home Loss", "Home Win"))) %>% gf_labs(title = "Home Team Advantage in NFL 2011 Season", x = "Date of Game", y = "Score", color = "Game Outcome") %>% gf_theme(legend.position = "bottom")
+
+```
+
+
+
+# MULTIPLE VARIABLES - ALL INDIVIDUAL PARTS 
+
+How does storm wind speed vary by storm category over time?
+
+```{r}
+data(storms)
+head(storms)
+storms_clean <- storms %>% mutate(DateTime = make_datetime(year = year, month = month, day = day, hour = hour), Category = factor(category, levels = c(-1, 0, 1, 2, 3, 4, 5), labels = c("TD", "TS", "1", "2", "3", "4", "5")))
+storms_2015 <- storms_clean %>% filter(year == 2015)
+gf_line(wind ~ DateTime, data = storms_2015, color = ~Category, group = ~name) %>% gf_refine(scale_color_brewer(palette = "YlOrRd", direction = 1)) %>% gf_labs(title = "Storm Wind Speeds by Category - 2015",x = "Date", y = "Wind Speed (knots)", color = "Storm Category") %>% gf_theme(legend.position = "right")
+gf_line(wind ~ DateTime, data = storms_2015, color = ~category, group = ~name) %>%gf_refine(scale_color_viridis_c(option = "plasma")) %>%gf_labs(title = "Storm Wind Speeds by Category - 2015",x = "Date", y = "Wind Speed (knots)",color = "Storm Category") %>%gf_theme(legend.position = "right")
+storms_major <- storms_2015 %>% filter(category >= 3)
+gf_line(wind ~ DateTime, data = storms_major, color = ~name, group = ~name) %>%gf_refine(scale_color_viridis_d(option = "plasma")) %>%gf_labs(title = "Major Hurricane Wind Speeds - 2015",x = "Date", y = "Wind Speed (knots)",color = "Storm Name") %>%gf_theme(legend.position = "right")
+storm_example <- storms_2015 %>% filter(name == "Joaquin")
+gf_line(wind ~ DateTime, data = storm_example, color = "darkred", size = 1.5) %>% gf_point(wind ~ DateTime, data = storm_example, color = "darkred", size = 2) %>% gf_labs(title = "Hurricane Joaquin Wind Speed - 2015", x = "Date", y = "Wind Speed (knots)", subtitle = "Wind speed progression over time") %>% gf_theme(legend.position = "none")
+storms_selected <- storms_2015 %>% filter(name %in% c("Joaquin", "Danny", "Erika", "Fred"))
+gf_line(wind ~ DateTime | name, data = storms_selected, color = "darkblue", size = 1.2) %>%gf_labs(title = "Selected Hurricane Wind Speeds - 2015",x = "Date", y = "Wind Speed (knots)") %>%gf_theme(legend.position = "none")
+```
+
+
+# ADDITIONALS DIFFICULTIES - NON-STANDARD MONTH SECTION
+
+What are the seasonal patterns in retail sales?
+
+```{r}
+data(RetailSales2011)
+head(RetailSales2011)
+RetailSales_clean <- RetailSales2011 %>% mutate(Month.Num = ifelse(str_length(Month) == 3,match(Month, month.abb),match(Month, month.name)),Date = make_date(year = Year, month = Month.Num),Quarter = quarter(Date),IsJanuary = Month.Num == 1)
+head(RetailSales_clean)
+gf_line(Sales ~ Date, data = RetailSales_clean, color = ~IsJanuary, size = 1.5)%>%gf_refine(scale_color_manual(values = c("FALSE" = "gray60", "TRUE" = "red"),labels = c("Other Months", "January"))) %>% gf_labs(title = "Retail Sales Show Consistent January Peaks",x = "Year", y = "Sales (millions)", color = "Month",subtitle = "January consistently shows highest sales each year") %>% gf_theme(legend.position = "bottom")
+gf_boxplot(Sales ~ factor(Quarter), data = RetailSales_clean, fill = ~factor(Quarter)) %>%gf_refine(scale_fill_brewer(palette = "Set3")) %>%gf_labs(title = "Retail Sales Distribution by Quarter",x = "Quarter", y = "Sales (millions)",subtitle = "Quarterly sales patterns 2000-2011") %>%gf_theme(legend.position = "none")
+
+```

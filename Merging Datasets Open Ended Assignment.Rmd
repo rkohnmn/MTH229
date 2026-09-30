@@ -1,0 +1,63 @@
+---
+title: "Merging Datasets Open Ended Assignment"
+author: "Robert Thomas Kohn"
+date: "10/10/25"
+output: 
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+```{r, setup, include=FALSE}
+require(mosaic)   # Load additional packages here 
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+theme_set(theme_classic( ))
+library(dplyr)
+library(stringr)
+library(ggplot2)
+library(tidyverse)
+library(scales)
+library(mosaic)
+```
+
+
+# Broadway 3 & 4 Merging
+
+```{r}
+Broadway3 <- read.csv("Broadway3.csv")
+Broadway3_clean <- Broadway3 %>% select(Show, TonyNomination, StyleOfShow, CriticReview, TypeOfShow, NumberOfPerform)
+Broadway4 <- read.csv("Broadway4.csv")
+Broadway4_clean <- Broadway4 %>% select(NameofShow, TimeBway, ShowType, TonyNoms, Genre, Past, YearOpened) %>%rename(Show = NameofShow)
+Broadway3_clean <- Broadway3_clean %>%mutate(Show = str_trim(Show))
+Broadway4_clean <- Broadway4_clean %>%mutate(Show = str_trim(Show))
+head(Broadway3_clean)
+head(Broadway4_clean)
+Broadway_combined <- Broadway3_clean %>% inner_join(Broadway4_clean, by = "Show")
+head(Broadway_combined)
+```
+
+
+
+# Question: How do Tony nominations relate to show run time and genre?
+
+I plan to make a scatter plot of TimeBway vs TonyNomination, colored by Genre
+
+```{r}
+gf_point(TimeBway ~ TonyNomination, data = Broadway_combined, color = ~Genre)
+
+# Revised
+Broadway_filtered <- Broadway_combined %>% filter(TimeBway <= 100)  # outliers
+
+gf_point(TimeBway ~ TonyNomination, data = Broadway_filtered, color = ~Genre, size = 3, alpha = 0.7) %>%
+  gf_abline(slope = 5, intercept = 0, color = "black", linetype = "dashed") %>% gf_labs(x = "Tony Nominations", y = "Months on Broadway", title = "More Nominations Increases Broadway Stay", subtitle = "Scatterplot of Tony Nominations vs Time on Broadway", caption = "Broadway3 & Broadway4(CSV)") %>% gf_theme(legend.position = "right")
+```
+
+As per usual, I dislike using the merging commands and sorting data but I managed to make relatively quick work of this. I was hoping to do something more extravagant but the majority of points got last due to not having matching columns. As such, I got a final graph with 3 total points which tells me nothing at all but I did refine it from the original one. I thought in the final it would be nice to remove outliers and add a general trend line. 

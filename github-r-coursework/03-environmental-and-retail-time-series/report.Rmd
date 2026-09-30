@@ -1,0 +1,147 @@
+---
+title: "Environmental & Retail Time-Series Dynamics"
+author: "Robert Kohn"
+date: "Fall 2025"
+output: 
+  html_document:
+    theme: flatly
+    toc: true
+    toc_depth: 3
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(lubridate)
+library(mosaic)
+library(Lock5Data)
+library(Stat2Data)
+library(viridis)
+library(scales)
+set.seed(67)
+```
+
+# Introduction
+
+Analyzing temporal data requires combining date-time string parsing, irregular sampling harmonization, and visual design choices that highlight trends and anomalies over time. This project explores two distinct time-series regimes:
+
+1. **Meteorological Systems**: High-frequency tracking of Atlantic storm systems and hurricane wind velocities from NOAA observations.
+2. **Economic Seasonality**: Long-term longitudinal retail sales patterns from 2000 to 2011, identifying recurring calendar-driven surges and quarterly shifts.
+
+# Part 1: NOAA Storms & Hurricane Intensity Tracking
+
+The NOAA `storms` dataset records atmospheric measurements for tropical cyclones across the Atlantic basin. Using `lubridate::make_datetime`, timestamps are synthesized from discrete calendar and hourly components.
+
+```{r clean-storms}
+data(storms)
+
+storms_clean <- storms %>%
+  mutate(
+    DateTime = make_datetime(year = year, month = month, day = day, hour = hour),
+    Category = factor(category, levels = c(-1, 0, 1, 2, 3, 4, 5),
+                      labels = c("TD", "TS", "Cat 1", "Cat 2", "Cat 3", "Cat 4", "Cat 5"))
+  )
+
+storms_2015 <- storms_clean %>% filter(year == 2015)
+head(storms_2015 %>% select(name, DateTime, Category, wind, pressure, status))
+```
+
+## Longitudinal Wind Speed Across Saffir-Simpson Categories
+
+```{r storms-plot, fig.width=8.5, fig.height=5}
+ggplot(storms_2015, aes(x = DateTime, y = wind, group = name, color = Category)) +
+  geom_line(linewidth = 0.9, alpha = 0.8) +
+  scale_color_brewer(palette = "YlOrRd", direction = 1) +
+  scale_x_datetime(date_breaks = "1 month", date_labels = "%b") +
+  labs(
+    title = "Atlantic Storm Wind Speed Trajectories (2015 Season)",
+    subtitle = "Continuous wind speed tracking categorized by Saffir-Simpson intensity scale",
+    x = "Date",
+    y = "Sustained Wind Speed (knots)",
+    color = "Storm Category",
+    caption = "Data Source: NOAA / dplyr::storms"
+  ) +
+  theme_minimal()
+```
+
+## Major Hurricanes (Category 3+)
+
+```{r major-hurricanes, fig.width=8, fig.height=4.5}
+storms_major <- storms_2015 %>% filter(as.numeric(category) >= 3)
+
+ggplot(storms_major, aes(x = DateTime, y = wind, group = name, color = name)) +
+  geom_line(linewidth = 1.3) +
+  geom_point(size = 2, alpha = 0.7) +
+  scale_color_viridis_d(option = "plasma") +
+  scale_x_datetime(date_breaks = "1 week", date_labels = "%b %d") +
+  labs(
+    title = "Major Hurricane Wind Speed Progression (2015)",
+    subtitle = "Tracking intensity evolution of peak category 3+ cyclones",
+    x = "Date",
+    y = "Wind Speed (knots)",
+    color = "Storm Name"
+  ) +
+  theme_minimal()
+```
+
+# Part 2: Retail Sales Seasonality & Anomaly Detection
+
+Economic time-series often contain non-standard calendar formatting. The `RetailSales2011` dataset contains mixed month string representations (e.g. 3-letter abbreviations alongside full month names).
+
+```{r clean-retail}
+data(RetailSales2011)
+
+RetailSales_clean <- RetailSales2011 %>%
+  mutate(
+    Month_Clean = str_trim(as.character(Month)),
+    Month_Num = ifelse(str_length(Month_Clean) == 3,
+                       match(Month_Clean, month.abb),
+                       match(Month_Clean, month.name)),
+    Date = make_date(year = Year, month = Month_Num),
+    Quarter = factor(quarter(Date), levels = 1:4, labels = c("Q1", "Q2", "Q3", "Q4")),
+    IsJanuary = (Month_Num == 1)
+  ) %>%
+  filter(!is.na(Date))
+```
+
+## Highlighting January Recurring Spikes
+
+Rather than relying on generic discrete color assignments, January observations are explicitly differentiated using a dual-hue accent strategy (`gray50` for standard baseline months vs `#d73027` crimson for January):
+
+```{r retail-plot, fig.width=8.5, fig.height=5}
+ggplot(RetailSales_clean, aes(x = Date, y = Sales)) +
+  geom_line(color = "gray65", linewidth = 0.8) +
+  geom_point(aes(color = IsJanuary, size = IsJanuary), alpha = 0.85) +
+  scale_color_manual(values = c("FALSE" = "gray50", "TRUE" = "#d73027"),
+                     labels = c("Standard Month", "January Peak")) +
+  scale_size_manual(values = c("FALSE" = 1.5, "TRUE" = 3), guide = "none") +
+  scale_y_continuous(labels = dollar_format(suffix = "M")) +
+  labs(
+    title = "US Retail Sales (2000–2011): Systematic January Spikes",
+    subtitle = "Longitudinal sales pattern with recurring post-holiday inventory and reporting surges",
+    x = "Year",
+    y = "Sales Volume",
+    color = "Month Type",
+    caption = "Data Source: Lock5Data::RetailSales2011"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+
+## Quarterly Distribution
+
+```{r retail-box, fig.width=7, fig.height=4.5}
+ggplot(RetailSales_clean, aes(x = Quarter, y = Sales, fill = Quarter)) +
+  geom_boxplot(alpha = 0.7, outlier.color = "red", outlier.size = 2) +
+  scale_fill_brewer(palette = "Blues") +
+  scale_y_continuous(labels = dollar_format(suffix = "M")) +
+  labs(
+    title = "Quarterly Distribution of Retail Sales Volume",
+    subtitle = "Q1 exhibits substantial positive skew due to January volume spikes",
+    x = "Calendar Quarter",
+    y = "Sales Volume"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```

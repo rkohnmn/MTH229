@@ -1,0 +1,69 @@
+---
+title: "Axis & Labels Guided Lab"
+author: "Robert Thomas Kohn"
+date: "9/17/25"
+output: 
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+```{r, setup, include=FALSE}
+require(mosaic)   # Load additional packages here 
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+library(readr)
+best_in_show <- read_csv("best_in_show.csv")
+breed_rank <- read_csv("breed_rank.csv")
+theme_set(theme_minimal())
+require(tidyr)
+breed_rank = breed_rank %>%
+  pivot_longer(cols = `2013 Rank`:`2020 Rank`, names_to = "Year", values_to = "Rank", names_pattern = "(.*) Rank")
+top_10 = subset(breed_rank, Rank <= 10)
+```
+
+
+# Reverse Discrete Scales & Guides
+
+```{r}
+library(ggformula)
+library(ggridges)
+
+require(MASS)
+data(Cars93)
+gf_bar( Type ~ . , data = Cars93 , fill = ~ DriveTrain , position= position_fill( ) )
+gf_bar( Type ~ . , data = Cars93 , fill = ~ DriveTrain , position= position_fill( ) )%>%gf_labs(x = "Proportion", y = "Type of Car", title="Most Cars have Front Wheel Drive" , subtitle = "Examining Student Preferences" , caption = "Dataset: Cars93(MASS)")+scale_fill_manual(values = c("4WD" = "darkblue", "Front" = "darkgreen", "Rear" = "darkred"),labels = c("4WD" = "All Wheel Drive", "Front" = "Front Wheel Drive", "Rear"="Rear Wheel Drive"), name = "Drive Train Type")
+
+gf_bar( Type ~ . , data = Cars93 , fill = ~ DriveTrain , position= position_fill( ) )%>%gf_refine( scale_y_discrete(limits=rev) )%>%gf_labs(x = "Proportion", y = "Type of Car", title="Most Cars have Front Wheel Drive" , subtitle = "Examining Student Preferences" , caption = "Dataset: Cars93(MASS)")+scale_fill_manual(values = c("4WD" = "darkblue", "Front" = "darkgreen", "Rear" = "darkred"),labels = c("4WD" = "All Wheel Drive", "Front" = "Front Wheel Drive", "Rear"="Rear Wheel Drive"), name = "Drive Train Type")
+
+#gf_bar( Type ~ . , data = Cars93 , fill = ~ DriveTrain , position= position_fill( ) )%>%gf_refine( scale_y_discrete(limits=rev) )%>%gf_refine( ... , scale_fill_brewer( palette = "Oranges" )%>%gf_labs(x = "Proportion", y = "Type of Car", title="Most Cars have Front Wheel Drive" , subtitle = "Examining Student Preferences" , caption = "Dataset: Cars93(MASS)")+scale_fill_manual(values = c("4WD" = "darkblue", "Front" = "darkgreen", "Rear" = "darkred"),labels = c("4WD" = "All Wheel Drive", "Front" = "Front Wheel Drive", "Rear"="Rear Wheel Drive"), name = "Drive Train Type") )
+
+gf_bar( Type ~ . , data = Cars93 , fill = ~ DriveTrain , position= position_fill( ) )%>%gf_refine( scale_y_discrete(limits=rev) )%>%gf_theme(legend.position = 'bottom')%>%gf_labs(x = "Proportion", y = "Type of Car", title="Most Cars have Front Wheel Drive" , subtitle = "Examining Student Preferences" , caption = "Dataset: Cars93(MASS)")+scale_fill_manual(values = c("4WD" = "darkblue", "Front" = "darkgreen", "Rear" = "darkred"),labels = c("4WD" = "All Wheel Drive", "Front" = "Front Wheel Drive", "Rear"="Rear Wheel Drive"), name = "Drive Train Type")
+
+gf_bar( Type ~ . , data = Cars93 , fill = ~ DriveTrain , position= position_fill( ) )%>%gf_refine( scale_y_discrete(limits=rev) )%>%gf_theme(legend.position = 'bottom')%>%gf_labs(x = "Proportion", y = "Type of Car", title="Most Cars have Front Wheel Drive" , subtitle = "Examining Student Preferences" , caption = "Dataset: Cars93(MASS)")+scale_fill_manual(values = c("4WD" = "darkblue", "Front" = "darkgreen", "Rear" = "darkred"),labels = c("4WD" = "All Wheel Drive", "Front" = "Front Wheel Drive", "Rear"="Rear Wheel Drive"), name = "Drive Train Type")
+
+gf_bar( Type ~ . , data = Cars93 , fill = ~ DriveTrain , position= position_fill( ) )%>%gf_refine( scale_y_discrete(limits=rev) )%>%gf_theme(legend.position = 'bottom')%>%gf_theme( guides( fill = guide_legend( reverse = TRUE ) ) )%>%gf_labs(x = "Proportion", y = "Type of Car", title="Most Cars have Front Wheel Drive" , subtitle = "Examining Student Preferences" , caption = "Dataset: Cars93(MASS)")+scale_fill_manual(values = c("4WD" = "darkblue", "Front" = "darkgreen", "Rear" = "darkred"),labels = c("4WD" = "All Wheel Drive", "Front" = "Front Wheel Drive", "Rear"="Rear Wheel Drive"), name = "Drive Train Type")
+
+```
+
+# Breed Rank
+
+```{r}
+gf_line( Rank ~ Year , data = top_10)
+gf_line( Rank ~ Year , data = top_10 , group = ~ Breed )
+gf_line( Rank ~ Year , data = top_10 , group = ~ Breed , color = "gray50")
+gf_line( Rank ~ Year , data = top_10 , group = ~ Breed , color = "gray50")%>%gf_point( Rank ~ Year , data = top_10)
+gf_line( Rank ~ Year , data = top_10 , group = ~ Breed , color = "gray50")%>%gf_point( Rank ~ Year , data = top_10, color = ~ Breed , size = 7 )
+gf_line( Rank ~ Year , data = top_10 , group = ~ Breed , color = "gray50")%>%gf_point( Rank ~ Year , data = top_10, color = ~ Breed , size = 7 )%>%gf_text( Rank ~ Year , data = top_10 , label = ~Rank , color = "white")
+gf_line( Rank ~ Year , data = top_10 , group = ~ Breed , color = "gray50")%>%gf_point( Rank ~ Year , data = top_10, color = ~ Breed , size = 7,show.legend = FALSE)%>%gf_text( Rank ~ Year , data = top_10 , label = ~Rank , color = "white")
+gf_line( Rank ~ Year , data = top_10 , group = ~ Breed , color = "gray50")%>%gf_point( Rank ~ Year , data = top_10, color = ~ Breed , size = 7,show.legend = FALSE)%>%gf_text( Rank ~ Year , data = top_10 , label = ~Rank , color = "white")%>%gf_text( Rank ~ Year , data = subset( top_10 , Year == 2020 ) , label = ~Breed , hjust = 0 , nudge_x = 0.3)
+gf_line( Rank ~ Year , data = top_10 , group = ~ Breed , color = "gray50")%>%gf_point( Rank ~ Year , data = top_10, color = ~ Breed , size = 7,show.legend = FALSE)%>%gf_text( Rank ~ Year , data = top_10 , label = ~Rank , color = "white")%>%gf_text( Rank ~ Year , data = subset( top_10 , Year == 2020 ) , label = ~Breed , hjust = 0 , nudge_x = 0.3)%>%gf_refine(scale_y_reverse(breaks = seq(1, 10))) %>%gf_refine(coord_cartesian(xlim = c(1, 10.7)))
+gf_line( Rank ~ Year , data = top_10 , group = ~ Breed , color = "gray50")%>%gf_point( Rank ~ Year , data = top_10, color = ~ Breed , size = 7,show.legend = FALSE)%>%gf_text( Rank ~ Year , data = top_10 , label = ~Rank , color = "white")%>%gf_text( Rank ~ Year , data = subset( top_10 , Year == 2020 ) , label = ~Breed , hjust = 0 , nudge_x = 0.3)%>%gf_refine(scale_y_reverse(breaks = seq(1, 10))) %>%gf_refine(coord_cartesian(xlim = c(1, 10.7)))%>%gf_labs(x = "Year", y = "Rank", title="Labrador Retrievers are the #1 Dog" , subtitle = "Breed Ranking with Line and Point Charts" , caption = "Dataset: best_in_show(csv)" )
+```

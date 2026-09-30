@@ -1,0 +1,97 @@
+---
+title: "2 Facetted Graphs Guided Lab"
+author: "Robert Thomas Kohn"
+date: "9/16/25"
+output: 
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+```{r, setup, include=FALSE}
+require(mosaic)   # Load additional packages here 
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+theme_set( theme_light( ) )
+```
+
+# No Facets (Yet)
+
+```{r}
+
+require(reshape2)
+head(tips)
+gf_bar( ~ tip , data = tips)%>%gf_labs(x = "Tip Amount", y = "Count", title="Exploring Tips" , subtitle = "Bar Chart" , caption = "Dataset: tips(reshape2)")
+gf_histogram(~ tip / total_bill * 100 , data = tips)%>%gf_labs(x = "Tip Percentage Amount", y = "Count", title="Exploring Tip Percentages" , subtitle = "Bar Chart" , caption = "Dataset: tips(reshape2)")
+gf_point( tip*100/total_bill ~ total_bill , data = tips )%>%gf_labs(x = "Total Bill Cost", y = "Tip Percentage Amount", title="Tip Percentages explained by Bill Cost" , subtitle = "Bar Chart" , caption = "Dataset: tips(reshape2)")
+
+```
+
+# Facet By Sex
+
+```{r}
+
+gf_point( tip*100/total_bill ~ total_bill , data = tips )%>%gf_labs(x = "Total Bill Cost", y = "Tip Percentage Amount", title="Tip Percentages explained by Bill Cost" , subtitle = "Bar Chart - Facet Wrapped(Sex)" , caption = "Dataset: tips(reshape2)")%>% gf_facet_wrap( ~ sex )
+
+gf_point( tip*100/total_bill ~ total_bill , data = tips )%>%gf_labs(x = "Total Bill Cost", y = "Tip Percentage Amount", title="Tip Percentages explained by Bill Cost" , subtitle = "Bar Chart - Facet Wrapped(Sex Adjusted)" , caption = "Dataset: tips(reshape2)")%>% gf_facet_wrap( ~ sex , nrow = 2 , strip.position = "right" )
+
+gf_point( tip*100/total_bill ~ total_bill , data = tips )%>%gf_labs(x = "Total Bill Cost", y = "Tip Percentage Amount", title="Tip Percentages explained by Bill Cost" , subtitle = "Bar Chart - Facet Grid(Sex X)" , caption = "Dataset: tips(reshape2)")%>% gf_facet_grid( ~ sex )
+
+gf_point( tip*100/total_bill ~ total_bill , data = tips )%>%gf_labs(x = "Total Bill Cost", y = "Tip Percentage Amount", title="Tip Percentages explained by Bill Cost" , subtitle = "Bar Chart - Facet Grid(Sex Y)" , caption = "Dataset: tips(reshape2)")%>% gf_facet_grid( sex~.)
+
+```
+
+# Facet by Day
+
+```{r}
+gf_point( tip*100/total_bill ~ total_bill , data = tips )%>%gf_labs(x = "Total Bill Cost", y = "Tip Percentage Amount", title="Tip Percentages explained by Bill Cost" , subtitle = "Bar Chart - Facet Wrapped(day)" , caption = "Dataset: tips(reshape2)")%>% gf_facet_wrap( ~ day )
+
+tips$day=factor(tips$day,levels=c("Thur","Fri","Sat","Sun"))
+
+gf_point( tip*100/total_bill ~ total_bill , data = tips )%>%gf_labs(x = "Total Bill Cost", y = "Tip Percentage Amount", title="Tip Percentages explained by Bill Cost" , subtitle = "Bar Chart - Facet Wrapped(day) - nrow=1" , caption = "Dataset: tips(reshape2)")%>% gf_facet_wrap( ~ day, nrow = 1)
+
+gf_point( tip*100/total_bill ~ total_bill , data = tips )%>%gf_labs(x = "Total Bill Cost", y = "Tip Percentage Amount", title="Tip Percentages explained by Bill Cost" , subtitle = "Bar Chart - Facet Wrapped(day) - Strip Right" , caption = "Dataset: tips(reshape2)")%>% gf_facet_wrap( ~ day, strip.position = "right" , nrow = 1 )
+```
+
+
+# Facet by BOTH Sex & Day
+
+```{r}
+
+gf_point( tip*100/total_bill ~ total_bill , data = tips )%>%gf_labs(x = "Total Bill Cost", y = "Tip Percentage Amount", title="Tip Percentages explained by Bill Cost" , subtitle = "Bar Chart - Facet Grid(Day, Sex)" , caption = "Dataset: tips(reshape2)")%>% gf_facet_grid( sex~day)
+
+gf_point( tip*100/total_bill ~ total_bill , data = tips )%>%gf_labs(x = "Total Bill Cost", y = "Tip Percentage Amount", title="Tip Percentages explained by Bill Cost" , subtitle = "Bar Chart - Facet Wrap(Day, Sex)" , caption = "Dataset: tips(reshape2)")%>% gf_facet_wrap( sex~day)
+
+gf_point( tip*100/total_bill ~ total_bill , data = tips )%>%gf_labs(x = "Total Bill Cost", y = "Tip Percentage Amount", title="Tip Percentages explained by Bill Cost" , subtitle = "Bar Chart - Facet Wrap(Day, Sex)" , caption = "Dataset: tips(reshape2)")%>% gf_facet_wrap( sex~day, nrow=2)
+
+```
+
+# Facet with Three Variables
+
+```{r}
+
+gf_point( tip*100/total_bill ~ total_bill , data = tips )%>%gf_labs(x = "Total Bill Cost", y = "Tip Percentage Amount", title="Tip Percentages explained by Bill Cost" , subtitle = "Bar Chart - Facet Grid(Day, Time+Sex)" , caption = "Dataset: tips(reshape2)")%>% gf_facet_grid(time+sex~day)
+
+gf_point( tip*100/total_bill ~ total_bill , data = tips )%>%gf_labs(x = "Total Bill Cost", y = "Tip Percentage Amount", title="Tip Percentages explained by Bill Cost" , subtitle = "Bar Chart - Facet Grid(Day, Sex+Time)" , caption = "Dataset: tips(reshape2)")%>% gf_facet_grid(sex+time~day)
+
+```
+
+# Free Scales
+
+```{r}
+
+gf_line( value ~ date , data = economics_long )
+
+gf_line( value ~ date , data = economics_long )%>% gf_facet_wrap(~variable)
+
+gf_line( value ~ date , data = economics_long )%>% gf_facet_wrap(~variable,ncol=1)
+
+gf_line( value ~ date , data = economics_long )%>% gf_facet_wrap(~variable,ncol=1,scales = "free_y")
+```

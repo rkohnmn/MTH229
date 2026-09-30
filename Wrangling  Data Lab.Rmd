@@ -1,0 +1,79 @@
+---
+title: "Wrangling Data Guided Lab (Separate, Mutate, Strings)"
+author: "Robert Thomas Kohn"
+date: "9/27/25"
+output: 
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+```{r, setup, include=FALSE}
+require(mosaic)   # Load additional packages here 
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+theme_set(theme_classic( ))
+library(tidyr)
+library(readr)
+library(stringr)
+library(forcats)
+library(dplyr)
+library(scales)
+```
+
+# Car Prices
+
+```{r}
+
+#CarPrices <- read_csv(file.choose("STA227 - Data Visualization/CarPrices.csv"))
+CarPrices <- read_csv("CarPrices.csv")
+NewCarPrices <- CarPrices
+#NewCarPrices <- NewCarPrices %>% separate_wider_delim(Car, delim = " ", names = c("Make", "Model"), too_many = "merge")
+#NewCarPrices <- NewCarPrices %>% separate_wider_delim(Car, delim = " ", names = c("Make", "Model"), too_many = "merge") %>% mutate(Price = parse_number(Price))
+NewCarPrices <- NewCarPrices %>% separate_wider_delim(Car, delim = " ", names = c("Make", "Model"), too_many = "merge") %>% mutate(Price = parse_number(Price),Make = str_replace(string = Make, pattern = "Subary", replacement = "Subaru"))
+
+gf_point(Price ~ Mileage, data = NewCarPrices, color = ~Make)%>%gf_labs(title = "Car Prices vs Mileage by Make", x = "Mileage (MPG)", y = "Price")
+gf_point(Price ~ Mileage, data = NewCarPrices, color = ~ Make) %>% gf_facet_wrap(~ Make)%>%gf_labs(title = "Car Prices vs Mileage by Make", x = "Mileage (MPG)", y = "Price")
+gf_point(Price ~ Mileage, data = NewCarPrices, color = ~ Make) %>% gf_facet_wrap(~ Make)%>%gf_theme(legend.position = "none")%>%gf_labs(title = "Car Prices vs Mileage by Make", x = "Mileage (MPG)", y = "Price")
+gf_point(Price ~ Mileage, data = transform(NewCarPrices, Make = NULL), color = "grey85", alpha = 0.4) %>% gf_point(Price ~ Mileage, data = NewCarPrices, color = ~ Make) %>% gf_facet_wrap(~ Make) %>%gf_theme(legend.position = "none") %>%gf_labs(title = "Car Prices vs Mileage by Make", x = "Mileage (MPG)", y = "Price")
+gf_point(Price ~ Mileage, data = transform(NewCarPrices, Make = NULL), color = "grey85", alpha = 0.4) %>% gf_point(Price ~ Mileage, data = NewCarPrices, color = ~ Make) %>% gf_facet_wrap(~ Make) %>% gf_refine(scale_y_continuous(labels = label_dollar(scale = 1/1000, suffix = "K")), scale_x_continuous(breaks = c(20, 30, 40))) %>%gf_theme(legend.position = "none") %>%gf_labs(title = "Car Prices vs Mileage by Make", x = "Mileage (MPG)", y = "Price")
+
+```
+
+# Music Preferences
+
+```{r}
+
+Music <- read.csv("Music.csv")
+gf_bar(~ Genre, data = Music) %>%gf_facet_wrap(~ Gender)%>% gf_labs(title = "Music Genre Preferences by Gender", x = "Count", y = "Genre")
+gf_bar(Genre ~ ., data = Music) %>%gf_facet_wrap(~ Gender)%>% gf_labs(title = "Music Genre Preferences by Gender", x = "Count", y = "Genre")
+CleanMusic <- Music %>% separate_longer_delim(Genre, delim = ";")
+gf_bar(Genre ~ ., data = CleanMusic) %>% gf_facet_wrap(~ Gender) %>% gf_labs(title = "Music Genre Preferences by Gender", x = "Count", y = "Genre")
+
+
+```
+
+# Major League Baseball Salaries
+
+```{r}
+
+library(Lock5Data)
+data(BaseballSalaries2015)
+Baseball2 <- BaseballSalaries2015
+Baseball2 <- BaseballSalaries2015 %>%group_by(Team)
+Baseball2 <- BaseballSalaries2015 %>%group_by(Team)%>%mutate(TotalSalary = sum(Salary), NumPlayers = n())
+gf_linerange(Team ~ 0 + TotalSalary, data = Baseball2, size = 3)%>%gf_labs(title = "Total Team Salary by Team Size",x = "Total Salary (Millions)",y = "Team",color = "Team Size")
+gf_linerange(fct_reorder(Team, TotalSalary) ~ 0 + TotalSalary, data = Baseball2, size = 3)%>%gf_labs(title = "Total Team Salary by Team Size",x ="Total Salary (Millions)",y = "Team",color = "Team Size")
+gf_linerange(fct_reorder(Team, TotalSalary) ~ 0 + TotalSalary, data = Baseball2, size = 3, color = ~NumPlayers > 30)%>%gf_labs(title = "Total Team Salary by Team Size",x ="Total Salary (Millions)",y = "Team",color = "Team Size")
+gf_linerange(fct_reorder(Team, TotalSalary) ~ 0 + TotalSalary, data = Baseball2, size = 3, color = ~NumPlayers > 30) %>%gf_refine(scale_color_brewer(palette = "Blues", labels = c("30 or Fewer Players", "Over 30 Players"))) %>%gf_labs(title = "Total Team Salary by Team Size",x = "Total Salary (Millions)",y = "Team",color = "Team Size")
+gf_linerange(fct_reorder(Team, TotalSalary) ~ 0 + TotalSalary, data = Baseball2, size = 3, color = ~NumPlayers > 30) %>%gf_refine(scale_color_brewer(palette = "Blues", labels = c("30 or Fewer Players", "Over 30 Players"))) %>%gf_theme(legend.position = "bottom") %>%gf_labs(title = "Total Team Salary by Team Size",x = "Total Salary (Millions)",y = "Team",color = "Team Size")
+
+
+```

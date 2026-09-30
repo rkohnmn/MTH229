@@ -1,0 +1,209 @@
+---
+title: "Interactivity Guided Lab"
+author: "Robert Thomas Kohn"
+date: "11/10/25"
+output: 
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+```{r, setup, include=FALSE}
+require(mosaic)   # Load additional packages here 
+knitr::opts_chunk$set(
+  tidy=FALSE,     # display code as typed
+  size="small")   # slightly smaller font for code
+theme_set(theme_classic( ))
+library(dplyr)
+library(stringr)
+library(plotly)
+library(tidyr)
+```
+
+# Read and prepare PIN data
+
+```{r}
+# Read and prepare PIN data
+pin = read.csv("https://raw.githubusercontent.com/danielmiessler/SecLists/refs/heads/master/Passwords/Common-Credentials/four-digit-pin-codes-sorted-by-frequency-withcount.csv", header = FALSE) %>%
+  rename(Pin = V1, Count = V2) %>%
+  mutate(Rank = row_number())
+
+# Format PINs with leading zeros
+pin$Pin = str_pad(pin$Pin, 4, pad = "0")
+
+# Split PIN into first and last two digits
+pin = pin %>%
+  mutate(First = str_sub(Pin, 1, 2),
+         Second = str_sub(Pin, 3, 4))
+#code above was copy and paste but I was getting weird errors so I asked gpt to revise and it worked. 
+
+
+gf_tile(First ~ Second, data = pin, fill = ~Count)
+gf_tile(as.numeric(First) ~ as.numeric(Second), data = pin, fill = ~Count)
+gf_tile(as.numeric(First) ~ as.numeric(Second), data = pin, fill = ~Count) %>% gf_refine( scale_x_continuous(expand = expansion(add = 0)), scale_y_continuous(expand = expansion(add = 0)))
+gf_tile(as.numeric(First) ~ as.numeric(Second), data = pin, fill = ~Count) %>% gf_refine(coord_fixed(), scale_x_continuous(expand = expansion(add = 0)), scale_y_continuous(expand = expansion(add = 0)))
+gf_tile(as.numeric(First) ~ as.numeric(Second), data = pin, fill = ~Count) %>% gf_refine(coord_fixed(), scale_x_continuous(expand = expansion(add = 0)), scale_y_continuous(expand = expansion(add = 0))) %>% gf_refine(scale_fill_viridis_c(option = "G"))
+gf_tile(as.numeric(First) ~ as.numeric(Second), data = pin, fill = ~Count) %>% gf_refine(coord_fixed(), scale_x_continuous(expand = expansion(add = 0)), scale_y_continuous(expand = expansion(add = 0))) %>% gf_refine(scale_fill_viridis_c(option = "G")) %>% gf_labs(y = "First 2 Digits", x = "Second 2 Digits")
+
+pin_plot = gf_tile(as.numeric(First) ~ as.numeric(Second), data = pin, fill = ~Count,text = ~paste("Pin:", Pin, "<br>Rank:", Rank, "<br>Count:", Count)) %>% gf_refine(coord_fixed(), scale_x_continuous(expand = expansion(add = 0)), scale_y_continuous(expand = expansion(add = 0))) %>% gf_refine(scale_fill_viridis_c(option = "G")) %>% gf_labs(y = "First 2 Digits", x = "Second 2 Digits")
+ggplotly(pin_plot)
+pin_plot = gf_tile(as.numeric(First) ~ as.numeric(Second), data = pin, fill = ~Count,text = ~paste("Pin: ", Pin,"<br>Rank: ", Rank,"<br>Percentile: ",
+round(Rank/10000*100, 0),"<br>Count: ", Count))%>% gf_refine(coord_fixed(), scale_x_continuous(expand = expansion(add = 0)), scale_y_continuous(expand = expansion(add = 0))) %>% gf_refine(scale_fill_viridis_c(option = "G")) %>% gf_labs(y = "First 2 Digits", x = "Second 2 Digits")
+ggplotly(pin_plot, tooltip = "text")
+
+```
+
+
+# QUARTERBACKS INTERACTIVE PLOT
+
+```{r}
+Quarterbacks <- readr::read_csv("Quarterbacks.csv")
+data(Quarterbacks)
+head(Quarterbacks)
+qb_plot = gf_point(HOFScore ~ GamesStarted, data = Quarterbacks, color = "blue", alpha = 0.7)
+ggplotly(qb_plot)
+qb_plot = gf_point(HOFScore ~ GamesStarted, data = Quarterbacks, color = "blue", alpha = 0.7, label = ~Player )
+ggplotly(qb_plot, tooltip = "label")
+#ggplotly(qb_plot, tooltip = "label","y","x")
+qb_plot = gf_point(HOFScore ~ GamesStarted, data = Quarterbacks, color = "blue", alpha = 0.7, text = ~paste("Player:", Player, "<br>HOF Score:", HOFScore, "<br>Games:", GamesStarted))
+ggplotly(qb_plot, tooltip = "text")
+
+```
+
+# CAR DATA ANIMATED PLOT
+
+
+```{r}
+data(mpg)
+head(mpg)
+gf_point(hwy ~ cty, data = mpg)
+gf_point(hwy ~ cty, data = mpg, color = ~class)
+car_plot = gf_point(hwy ~ cty, data = mpg,color = ~class, alpha = 0.7) %>%gf_labs(y = "Highway MPG", x = "City MPG")
+ggplotly(car_plot)
+car_plot = gf_point(hwy ~ cty, data = mpg,color = ~class, alpha = 0.7,text = ~paste("Manufacturer:", manufacturer, "<br>Model:", model, "<br>Class:", class)) %>%gf_labs(y = "Highway MPG", x = "City MPG")
+ggplotly(car_plot)
+ggplotly(car_plot, tooltip = "text")
+car_plot = gf_point(hwy ~ cty, data = mpg,color = ~class, alpha = 0.7,text = ~paste("Manufacturer:", manufacturer, "<br>Model:", model, "<br>Class:", class),frame = ~class) %>%gf_labs(y = "Highway MPG", x = "City MPG")
+ggplotly(car_plot, tooltip = "text")
+ggplotly(car_plot, tooltip = "text")  %>% animation_opts(transition = 0)
+ggplotly(car_plot, tooltip = "text")  %>% animation_opts(transition = 0) %>% animation_slider( currentvalue = list( prefix = "Car Type ", font = list( color="red" ) ) )
+
+```
+
+
+# GAPMINDER ANIMATED PLOT
+
+
+```{r}
+require(gapminder)
+data(gapminder)
+head(gapminder)
+
+gf_point(lifeExp ~ gdpPercap, data = gapminder, color = ~country, size = ~pop, show.legend = FALSE)
+gf_point(lifeExp ~ gdpPercap, data = gapminder, color = ~country, size = ~pop, show.legend = FALSE)%>%gf_facet_wrap(~continent)
+gf_point(lifeExp ~ gdpPercap, data = gapminder, color = ~country, size = ~pop, alpha = 0.7,frame = ~year, show.legend = FALSE) %>%gf_facet_wrap(~continent) %>%gf_refine(scale_color_manual(values = country_colors), scale_x_log10(),scale_size(range = c(2, 12)))
+gf_point(lifeExp ~ gdpPercap, data = gapminder, color = ~country, size = ~pop, alpha = 0.7,frame = ~year, show.legend = FALSE) %>%gf_facet_wrap(~continent) %>%gf_refine(scale_color_manual(values = country_colors), scale_x_log10(),scale_size(range = c(2, 12))) %>%
+  gf_theme(legend.position = "none")
+world_plot = gf_point(lifeExp ~ gdpPercap, data = gapminder, color = ~country, size = ~pop, alpha = 0.7,frame = ~year, show.legend = FALSE) %>%gf_facet_wrap(~continent) %>%gf_refine(scale_color_manual(values = country_colors), scale_x_log10(),scale_size(range = c(2, 12))) %>% gf_theme(legend.position = "none") %>% gf_labs(y = "Life Expectancy", x = "GDP per Capita (log)")
+ggplotly(world_plot)
+
+```
+
+# DIAMONDS HIGHLIGHT PLOT
+
+```{r}
+data(diamonds)
+set.seed(1234)
+small_diamonds = diamonds[sample(nrow(diamonds), 1000), ]
+nrow(small_diamonds)
+gf_point(price ~ carat, data = small_diamonds,color = ~clarity, alpha = 0.5) %>%gf_labs(y = "Price", x = "Carat")
+dplot=gf_point(price ~ carat, data = small_diamonds,color = ~clarity, alpha = 0.5, group = ~clarity) %>%gf_labs(y = "Price", x = "Carat")
+ggplotly(dplot)
+new.diamonds = highlight_key(small_diamonds, ~clarity)
+diamonds_plot = gf_point(price ~ carat, data = new.diamonds,color = ~clarity, alpha = 0.5, group = ~clarity) %>%gf_labs(y = "Price", x = "Carat")
+ggplotly(diamonds_plot)
+highlight(ggplotly(diamonds_plot), on = "plotly_hover", off = "plotly_deselect")
+
+```
+
+# DOG BREEDS HIGHLIGHT PLOT
+
+
+```{r}
+breed_rank = readr::read_csv("breed_rank.csv")
+head(breed_rank)
+theme_set(theme_minimal())
+breed_rank = breed_rank %>%
+  pivot_longer(cols = '2013 Rank':'2020 Rank', 
+               names_to = "Year", values_to = "Rank", 
+               names_pattern = "(.*) Rank")
+top_10 = subset(breed_rank, Rank <= 10)
+gf_line(Rank~Year, data = top_10, group = ~Breed, color = "gray50") %>%
+gf_point(Rank~Year, data = top_10, size = 7, color = ~Breed) %>%
+gf_text(Rank~Year, data = top_10, label = ~Rank, color = "white") %>%
+gf_theme(legend.position = "none") %>%
+gf_text(Rank~Year, data = subset(top_10, Year == 2020), label = ~Breed, hjust = 0, nudge_x = 0.3) %>%
+gf_refine(scale_y_reverse(breaks = c(seq(1:10))), coord_cartesian(xlim = c(1,10.7)))
+
+highlight_top10 = highlight_key(top_10, ~Breed)
+breed_plot = gf_line(Rank ~ Year, data = highlight_top10, group = ~Breed, color = 'gray50') %>% gf_point(Rank ~ Year, data = highlight_top10, size = 7, color = ~Breed) %>% gf_text(Rank ~ Year, data = highlight_top10, label = ~Rank, color = "white") %>% gf_theme(legend.position = "none") %>% gf_refine(scale_y_reverse(breaks = 1:10))
+highlight(ggplotly(breed_plot), on = "plotly_hover", off = "plotly_deselect")
+
+```
+
+# Cumulative Functions
+
+
+```{r}
+
+# Function used to create cumulative dataset
+accumulate_by <- function(dat, var) {
+var <- lazyeval::f_eval(var, dat)
+lvls <- plotly:::getLevels(var)
+dats <- lapply(seq_along(lvls), function(x) {
+cbind(dat[var %in% lvls[seq(1, x)], ], frame = lvls[[x]])
+})
+dplyr::bind_rows(dats)
+}
+# Create new dataset
+new.gapminder = gapminder %>% accumulate_by(~year)
+
+gf_area( pop ~ year , data = subset( new.gapminder , continent == "Oceania" ) ,
+frame = ~frame, fill = ~country ) %>%
+gf_facet_wrap( ~ country )
+
+gf_area( pop ~ year , data = subset( new.gapminder , continent == "Oceania" ) , frame = ~frame, fill = ~country ) %>%gf_facet_wrap( ~ country)%>%gf_refine(scale_color_manual(values = country_colors))
+
+gf_area( pop ~ year , data = subset( new.gapminder , continent == "Oceania" ) ,frame = ~frame, fill = ~country ) %>%gf_facet_wrap( ~ country) %>% gf_refine(scale_color_manual(values = country_colors)) %>%gf_theme(legend.position = "none")
+
+area.test=gf_area( pop ~ year , data = subset( new.gapminder , continent == "Oceania" ) ,frame = ~frame, fill = ~country ) %>%gf_facet_wrap( ~ country) %>% gf_refine(scale_color_manual(values = country_colors)) %>%gf_theme(legend.position = "none")
+ggplotly(area.test)
+ggplotly( area.test ) %>%
+animation_opts( transition = 0, frame = 200 )
+
+
+
+```
+
+# Cumulative Line Graph
+
+```{r}
+
+cglf = gapminder %>% accumulate_by(~year)
+gf_line(pop ~ year, data = subset(cglf, continent == "Europe"), color = ~country)
+gf_line(pop ~ year, data = subset(cglf, continent == "Europe"), color = ~country) %>% gf_refine(scale_color_manual(values = country_colors))
+line_plot = gf_line(pop ~ year, data = subset(cglf, continent == "Europe"), color = ~country, frame = ~frame) %>% gf_refine(scale_color_manual(values = country_colors)) %>%  gf_theme(legend.position = "none")
+ggplotly(line_plot)
+ggplotly(line_plot) %>%
+  animation_opts(transition = 0, frame = 200)
+
+```
+
+I hope I got everything, lowkey ran out of steam at the end haha
+
